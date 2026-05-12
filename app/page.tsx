@@ -1,65 +1,213 @@
-import Image from "next/image";
+import Link from "next/link";
+import FadeIn from "@/components/FadeIn";
+
+const workItems = [
+  {
+    num: "01",
+    title: "Research & Analysis",
+    desc: "TF-IDF similarity across 104,000+ n-gram features — tracing how 188 state abortion bills traveled through advocacy networks after Dobbs.",
+    tag: "Computational · Diffusion",
+  },
+  {
+    num: "02",
+    title: "Legislative Policy",
+    desc: "Briefing, tracking, and analysis across healthcare, reproductive rights, transportation, and regulatory domains.",
+    tag: "Briefing · Analysis",
+  },
+  {
+    num: "03",
+    title: "Reform & Advocacy",
+    desc: "Research at the places where policy fails the people it claims to serve — and the work of building toward something better.",
+    tag: "Reproductive Rights · Access",
+  },
+];
+
+// First two displayed large as opening statements; rest in the grid
+const featuredBeliefs = [
+  "Accessible law is a form of equity.",
+  "Rights that vary by state aren't rights — they're privileges.",
+];
+const gridBeliefs = [
+  "The words in laws determine who gets protected.",
+  "Policy change starts in networks, not legislatures.",
+  "Proximity to power is not proximity to truth.",
+  "Durable reform requires organizing and drafting to move together.",
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <main>
+
+      {/* ── Hero ─────────────────────────────────────────────── */}
+      <section className="min-h-[100svh] flex flex-col px-6 md:px-12 pt-32 pb-14 max-w-[1280px] mx-auto">
+
+        {/* Name as identity marker */}
+        <div className="flex items-center justify-between mb-20 pt-4" style={{ borderTop: "1px solid var(--rule)" }}>
+          <p className="display-i text-base" style={{ color: "var(--stone)" }}>Liliana Kowalski</p>
+          <p className="text-xs tracking-[0.3em] uppercase font-sans" style={{ color: "var(--stone)" }}>Policy Researcher</p>
+        </div>
+
+        {/* Main statement */}
+        <div className="flex-1 flex flex-col justify-center">
+          <h1
+            className="display text-[clamp(3.4rem,9.5vw,10rem)] leading-[0.98] tracking-[-0.03em] mb-16"
+            style={{ color: "var(--ink)", maxWidth: "14ch" }}
+          >
+            Reimagining how policy serves{" "}
+            <span className="display-i" style={{ color: "var(--clay)" }}>people.</span>
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-20 items-end">
+            <p className="text-base font-sans leading-relaxed" style={{ color: "var(--stone)", maxWidth: "36ch" }}>
+              Working at the intersection of legislative process and human dignity — I research how policy is made, borrowed, and deployed, and why that matters.
+            </p>
+            <div className="flex flex-col gap-3">
+              <Link href="/work" className="aul display text-2xl" style={{ color: "var(--ink)" }}>My Work →</Link>
+              <Link href="/about" className="aul display text-2xl" style={{ color: "var(--stone)" }}>About Me →</Link>
+              <Link href="/resources" className="aul display text-2xl" style={{ color: "var(--stone)" }}>Resources →</Link>
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+      </section>
+
+      {/* ── The Work ─────────────────────────────────────────── */}
+      <section className="px-6 md:px-12 py-28 max-w-[1280px] mx-auto" style={{ borderTop: "1px solid var(--rule)" }}>
+        <FadeIn>
+          <div className="flex items-baseline justify-between mb-16">
+            <h2 className="display text-[clamp(1.8rem,4vw,3.2rem)] tracking-[-0.02em]" style={{ color: "var(--ink)" }}>
+              The Work
+            </h2>
+            <Link href="/work" className="aul text-sm font-sans" style={{ color: "var(--stone)" }}>All research →</Link>
+          </div>
+        </FadeIn>
+
+        <div style={{ borderTop: "1px solid var(--rule)" }}>
+          {workItems.map((item, i) => (
+            <FadeIn key={item.num} delay={i * 65}>
+              <Link
+                href="/work"
+                className="group grid grid-cols-[40px_1fr] md:grid-cols-[40px_1fr_180px] gap-4 md:gap-10 py-9 items-start hover:opacity-55 transition-opacity duration-200"
+                style={{ borderBottom: "1px solid var(--rule)" }}
+              >
+                <span className="display text-xl pt-0.5" style={{ color: "var(--clay)" }}>{item.num}</span>
+                <div>
+                  <h3 className="display text-[clamp(1.4rem,2.8vw,2.2rem)] tracking-[-0.01em] mb-2 leading-snug" style={{ color: "var(--ink)" }}>
+                    {item.title}
+                  </h3>
+                  <p className="text-sm font-sans leading-relaxed" style={{ color: "var(--stone)" }}>{item.desc}</p>
+                </div>
+                <span className="text-xs font-sans mt-1 hidden md:block text-right" style={{ color: "var(--clay)" }}>{item.tag}</span>
+              </Link>
+            </FadeIn>
+          ))}
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* ── How I Work ───────────────────────────────────────── */}
+      <section className="px-6 md:px-12 py-28" style={{ background: "var(--linen)", borderTop: "1px solid var(--rule)" }}>
+        <div className="max-w-[1280px] mx-auto">
+          <FadeIn className="mb-16">
+            <h2 className="display text-[clamp(1.8rem,4vw,3.2rem)] tracking-[-0.02em]" style={{ color: "var(--ink)" }}>
+              How I Work
+            </h2>
+          </FadeIn>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
+            {[
+              { n: "01", t: "Define the Question", d: "What does this policy actually do — to whom, and why?" },
+              { n: "02", t: "Follow the Evidence", d: "Text, data, and the people inside the system." },
+              { n: "03", t: "Surface the Pattern", d: "Where does power move, and what does it leave behind?" },
+              { n: "04", t: "Translate for Impact", d: "Findings that reach the people who can act on them." },
+            ].map((s, i) => (
+              <FadeIn key={s.n} delay={i * 55}>
+                <div style={{ borderTop: "2px solid var(--clay)", paddingTop: "1.5rem" }}>
+                  <p className="display text-4xl leading-none mb-5 select-none" style={{ color: "var(--clay)", opacity: 0.35 }}>{s.n}</p>
+                  <h3 className="display text-xl leading-snug mb-3 tracking-[-0.01em]" style={{ color: "var(--ink)" }}>{s.t}</h3>
+                  <p className="text-sm font-sans leading-relaxed" style={{ color: "var(--stone)" }}>{s.d}</p>
+                </div>
+              </FadeIn>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── I believe ────────────────────────────────────────── */}
+      <section className="px-6 md:px-12 py-28 max-w-[1280px] mx-auto" style={{ borderTop: "1px solid var(--rule)" }}>
+        <FadeIn>
+          <div className="flex items-baseline justify-between mb-16">
+            <h2 className="display text-[clamp(1.8rem,4vw,3.2rem)] tracking-[-0.02em]" style={{ color: "var(--ink)" }}>
+              I believe…
+            </h2>
+            <Link href="/views" className="aul text-sm font-sans" style={{ color: "var(--stone)" }}>Read my views →</Link>
+          </div>
+        </FadeIn>
+
+        {/* Large opening statements */}
+        <FadeIn delay={40}>
+          <div className="mb-12" style={{ borderTop: "1px solid var(--rule)", paddingTop: "2rem" }}>
+            {featuredBeliefs.map((b, i) => (
+              <p
+                key={i}
+                className="display-i text-[clamp(1.6rem,3.5vw,3rem)] leading-[1.2] tracking-[-0.02em] mb-4"
+                style={{ color: "var(--ink)" }}
+              >
+                {b}
+              </p>
+            ))}
+          </div>
+        </FadeIn>
+
+        {/* Smaller supporting beliefs */}
+        <FadeIn delay={100}>
+          <div
+            className="grid grid-cols-1 sm:grid-cols-2 gap-x-16 gap-y-5 pt-8"
+            style={{ borderTop: "1px solid var(--rule)" }}
+          >
+            {gridBeliefs.map((b, i) => (
+              <p key={i} className="display-i text-[clamp(1rem,1.5vw,1.15rem)] leading-[1.5]" style={{ color: "var(--stone)" }}>
+                &ldquo;{b}&rdquo;
+              </p>
+            ))}
+          </div>
+        </FadeIn>
+      </section>
+
+      {/* ── Connect ──────────────────────────────────────────── */}
+      <section className="px-6 md:px-12 py-28" style={{ background: "var(--linen)", borderTop: "1px solid var(--rule)" }}>
+        <div className="max-w-[1280px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 items-end">
+          <FadeIn>
+            <p className="text-xs tracking-[0.3em] uppercase font-sans mb-8" style={{ color: "var(--stone)" }}>Get Connected</p>
+            <h2 className="display text-[clamp(2.8rem,6.5vw,6.5rem)] leading-[1.0] tracking-[-0.03em]" style={{ color: "var(--ink)" }}>
+              Let&rsquo;s work<br />
+              <span className="display-i" style={{ color: "var(--clay)" }}>together.</span>
+            </h2>
+          </FadeIn>
+          <FadeIn delay={80}>
+            <p className="text-base font-sans leading-relaxed mb-10 max-w-sm" style={{ color: "var(--stone)" }}>
+              Seeking positions in legislative counsel, policy research, and government affairs. Open to collaborators working on healthcare access, reproductive rights, or strategic policy reform.
+            </p>
+            <div style={{ borderTop: "1px solid var(--rule)" }}>
+              {[
+                { label: "lilianakowalskipolicy@gmail.com", href: "mailto:lilianakowalskipolicy@gmail.com", arrow: "↗" },
+                { label: "LinkedIn", href: "https://linkedin.com/in/liliana-kowalski", arrow: "↗" },
+                { label: "Download CV", href: "/LilianaKowalski_CV.pdf", arrow: "↓" },
+              ].map((item) => (
+                <a
+                  key={item.label}
+                  href={item.href}
+                  target={item.href.startsWith("http") ? "_blank" : undefined}
+                  rel={item.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  className="flex items-center justify-between py-5 hover:opacity-50 transition-opacity duration-200"
+                  style={{ borderBottom: "1px solid var(--rule)", color: "var(--ink)" }}
+                >
+                  <span className="display text-xl">{item.label}</span>
+                  <span className="font-sans text-sm" style={{ color: "var(--stone)" }}>{item.arrow}</span>
+                </a>
+              ))}
+            </div>
+          </FadeIn>
+        </div>
+      </section>
+    </main>
   );
 }
