@@ -1,38 +1,10 @@
 import Link from "next/link";
 import FadeIn from "@/components/FadeIn";
+import homeData from "../content/home.json";
+import workData from "../content/work.json";
 
-const workItems = [
-  {
-    num: "01",
-    title: "Research & Analysis",
-    desc: "TF-IDF similarity across 104,000+ n-gram features — tracing how 188 state abortion bills traveled through advocacy networks after Dobbs.",
-    tag: "Computational · Diffusion",
-  },
-  {
-    num: "02",
-    title: "Legislative Policy",
-    desc: "Briefing, tracking, and analysis across healthcare, reproductive rights, transportation, and regulatory domains.",
-    tag: "Briefing · Analysis",
-  },
-  {
-    num: "03",
-    title: "Reform & Advocacy",
-    desc: "Research at the places where policy fails the people it claims to serve — and the work of building toward something better.",
-    tag: "Reproductive Rights · Access",
-  },
-];
-
-// First two displayed large as opening statements; rest in the grid
-const featuredBeliefs = [
-  "Accessible law is a form of equity.",
-  "Rights that vary by state aren't rights — they're privileges.",
-];
-const gridBeliefs = [
-  "The words in laws determine who gets protected.",
-  "Policy change starts in networks, not legislatures.",
-  "Proximity to power is not proximity to truth.",
-  "Durable reform requires organizing and drafting to move together.",
-];
+const workItems = workData.projects.slice(0, 3);
+const { featuredBeliefs, gridBeliefs, process: processSteps } = homeData;
 
 export default function Home() {
   return (
@@ -40,14 +12,11 @@ export default function Home() {
 
       {/* ── Hero ─────────────────────────────────────────────── */}
       <section className="min-h-[100svh] flex flex-col px-6 md:px-12 pt-32 pb-14 max-w-[1280px] mx-auto">
-
-        {/* Name as identity marker */}
         <div className="flex items-center justify-between mb-20 pt-4" style={{ borderTop: "1px solid var(--rule)" }}>
           <p className="display-i text-base" style={{ color: "var(--stone)" }}>Liliana Kowalski</p>
           <p className="text-xs tracking-[0.3em] uppercase font-sans" style={{ color: "var(--stone)" }}>Policy Researcher</p>
         </div>
 
-        {/* Main statement */}
         <div className="flex-1 flex flex-col justify-center">
           <h1
             className="display text-[clamp(3.4rem,9.5vw,10rem)] leading-[0.98] tracking-[-0.03em] mb-16"
@@ -62,8 +31,8 @@ export default function Home() {
               Working at the intersection of legislative process and human dignity — I research how policy is made, borrowed, and deployed, and why that matters.
             </p>
             <div className="flex flex-col gap-3">
-              <Link href="/work" className="aul display text-2xl" style={{ color: "var(--ink)" }}>My Work →</Link>
-              <Link href="/about" className="aul display text-2xl" style={{ color: "var(--stone)" }}>About Me →</Link>
+              <Link href="/work"      className="aul display text-2xl" style={{ color: "var(--ink)" }}>My Work →</Link>
+              <Link href="/about"     className="aul display text-2xl" style={{ color: "var(--stone)" }}>About Me →</Link>
               <Link href="/resources" className="aul display text-2xl" style={{ color: "var(--stone)" }}>Resources →</Link>
             </div>
           </div>
@@ -96,7 +65,7 @@ export default function Home() {
                   </h3>
                   <p className="text-sm font-sans leading-relaxed" style={{ color: "var(--stone)" }}>{item.desc}</p>
                 </div>
-                <span className="text-xs font-sans mt-1 hidden md:block text-right" style={{ color: "var(--clay)" }}>{item.tag}</span>
+                <span className="text-xs font-sans mt-1 hidden md:block text-right" style={{ color: "var(--clay)" }}>{item.category}</span>
               </Link>
             </FadeIn>
           ))}
@@ -113,17 +82,12 @@ export default function Home() {
           </FadeIn>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-10">
-            {[
-              { n: "01", t: "Define the Question", d: "What does this policy actually do — to whom, and why?" },
-              { n: "02", t: "Follow the Evidence", d: "Text, data, and the people inside the system." },
-              { n: "03", t: "Surface the Pattern", d: "Where does power move, and what does it leave behind?" },
-              { n: "04", t: "Translate for Impact", d: "Findings that reach the people who can act on them." },
-            ].map((s, i) => (
-              <FadeIn key={s.n} delay={i * 55}>
+            {processSteps.map((s, i) => (
+              <FadeIn key={s.num} delay={i * 55}>
                 <div style={{ borderTop: "2px solid var(--clay)", paddingTop: "1.5rem" }}>
-                  <p className="display text-4xl leading-none mb-5 select-none" style={{ color: "var(--clay)", opacity: 0.35 }}>{s.n}</p>
-                  <h3 className="display text-xl leading-snug mb-3 tracking-[-0.01em]" style={{ color: "var(--ink)" }}>{s.t}</h3>
-                  <p className="text-sm font-sans leading-relaxed" style={{ color: "var(--stone)" }}>{s.d}</p>
+                  <p className="display text-4xl leading-none mb-5 select-none" style={{ color: "var(--clay)", opacity: 0.35 }}>{s.num}</p>
+                  <h3 className="display text-xl leading-snug mb-3 tracking-[-0.01em]" style={{ color: "var(--ink)" }}>{s.title}</h3>
+                  <p className="text-sm font-sans leading-relaxed" style={{ color: "var(--stone)" }}>{s.desc}</p>
                 </div>
               </FadeIn>
             ))}
@@ -135,34 +99,23 @@ export default function Home() {
       <section className="px-6 md:px-12 py-28 max-w-[1280px] mx-auto" style={{ borderTop: "1px solid var(--rule)" }}>
         <FadeIn>
           <div className="flex items-baseline justify-between mb-16">
-            <h2 className="display text-[clamp(1.8rem,4vw,3.2rem)] tracking-[-0.02em]" style={{ color: "var(--ink)" }}>
-              I believe…
-            </h2>
+            <h2 className="display text-[clamp(1.8rem,4vw,3.2rem)] tracking-[-0.02em]" style={{ color: "var(--ink)" }}>I believe…</h2>
             <Link href="/views" className="aul text-sm font-sans" style={{ color: "var(--stone)" }}>Read my views →</Link>
           </div>
         </FadeIn>
 
-        {/* Large opening statements */}
         <FadeIn delay={40}>
           <div className="mb-12" style={{ borderTop: "1px solid var(--rule)", paddingTop: "2rem" }}>
             {featuredBeliefs.map((b, i) => (
-              <p
-                key={i}
-                className="display-i text-[clamp(1.6rem,3.5vw,3rem)] leading-[1.2] tracking-[-0.02em] mb-4"
-                style={{ color: "var(--ink)" }}
-              >
+              <p key={i} className="display-i text-[clamp(1.6rem,3.5vw,3rem)] leading-[1.2] tracking-[-0.02em] mb-4" style={{ color: "var(--ink)" }}>
                 {b}
               </p>
             ))}
           </div>
         </FadeIn>
 
-        {/* Smaller supporting beliefs */}
         <FadeIn delay={100}>
-          <div
-            className="grid grid-cols-1 sm:grid-cols-2 gap-x-16 gap-y-5 pt-8"
-            style={{ borderTop: "1px solid var(--rule)" }}
-          >
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-16 gap-y-5 pt-8" style={{ borderTop: "1px solid var(--rule)" }}>
             {gridBeliefs.map((b, i) => (
               <p key={i} className="display-i text-[clamp(1rem,1.5vw,1.15rem)] leading-[1.5]" style={{ color: "var(--stone)" }}>
                 &ldquo;{b}&rdquo;

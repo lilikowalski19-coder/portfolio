@@ -1,0 +1,34 @@
+{
+  "featuredBeliefs": [
+    "Accessible law is a form of equity.",
+    "Rights that vary by state aren't rights — they're privileges."
+  ],
+  "gridBeliefs": [
+    "The words in laws determine who gets protected.",
+    "Policy change starts in networks, not legislatures.",
+    "Proximity to power is not proximity to truth.",
+    "Durable reform requires organizing and drafting to move together."
+  ],
+  "process": [
+    {
+      "num": "01",
+      "title": "Define the Question",
+      "desc": "What does this policy actually do — to whom, and why?"
+    },
+    {
+      "num": "02",
+      "title": "Follow the Evidence",
+      "desc": "Text, data, and the people inside the system."
+    },
+    {
+      "num": "03",
+      "title": "Surface the Pattern",
+      "desc": "Where does power move, and what does it leave behind?"
+    },
+    {
+      "num": "04",
+      "title": "Translate for Impact",
+      "desc": "Findings that reach the people who can act on them."
+    }
+  ]
+}

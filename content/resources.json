@@ -1,0 +1,172 @@
+{
+  "resources": [
+    {
+      "name": "Planned Parenthood",
+      "cat": "Reproductive Care",
+      "desc": "Comprehensive reproductive healthcare, telehealth, and referrals nationwide.",
+      "url": "plannedparenthood.org",
+      "note": "Find a health center"
+    },
+    {
+      "name": "National Abortion Federation Hotline",
+      "cat": "Reproductive Care",
+      "desc": "Financial assistance and logistical support for people seeking abortion care.",
+      "url": "prochoice.org",
+      "note": "1-800-772-9100"
+    },
+    {
+      "name": "National Network of Abortion Funds",
+      "cat": "Reproductive Care",
+      "desc": "Connects people to local funds covering abortion costs, travel, and lodging.",
+      "url": "abortionfunds.org",
+      "note": ""
+    },
+    {
+      "name": "Aid Access",
+      "cat": "Reproductive Care",
+      "desc": "Telehealth consultations and medication abortion by mail for people in the U.S.",
+      "url": "aidaccess.org",
+      "note": ""
+    },
+    {
+      "name": "If/When/How",
+      "cat": "Reproductive Care",
+      "desc": "Reproductive justice legal support and a legal defense hotline.",
+      "url": "ifwhenhow.org",
+      "note": "Repro Legal Helpline: 1-844-868-2812"
+    },
+    {
+      "name": "Reprocare Healthline",
+      "cat": "Reproductive Care",
+      "desc": "Support navigating care, including travel logistics and financial assistance.",
+      "url": "reprocarehealthline.org",
+      "note": "1-833-226-7821"
+    },
+    {
+      "name": "RAICES",
+      "cat": "Immigration",
+      "desc": "Immigration legal services, family reunification, and policy advocacy.",
+      "url": "raicestexas.org",
+      "note": ""
+    },
+    {
+      "name": "National Immigration Law Center",
+      "cat": "Immigration",
+      "desc": "Advances the rights of low-income immigrants through policy and legal support.",
+      "url": "nilc.org",
+      "note": ""
+    },
+    {
+      "name": "ACLU Immigrants' Rights Project",
+      "cat": "Immigration",
+      "desc": "Litigates cases challenging unlawful immigration enforcement and detention.",
+      "url": "aclu.org/immigrants-rights",
+      "note": ""
+    },
+    {
+      "name": "United We Dream",
+      "cat": "Immigration",
+      "desc": "Undocumented youth–led network with advocacy resources and community support.",
+      "url": "unitedwedream.org",
+      "note": ""
+    },
+    {
+      "name": "Immigration Legal Resource Center",
+      "cat": "Immigration",
+      "desc": "Training and resources for advocates, legal aid providers, and community members.",
+      "url": "ilrc.org",
+      "note": ""
+    },
+    {
+      "name": "Vera Institute of Justice",
+      "cat": "Immigration",
+      "desc": "Research and direct services for immigrants detained or facing deportation.",
+      "url": "vera.org",
+      "note": ""
+    },
+    {
+      "name": "ACLU",
+      "cat": "Legal Aid",
+      "desc": "Civil rights and civil liberties litigation, advocacy, and know-your-rights resources.",
+      "url": "aclu.org",
+      "note": ""
+    },
+    {
+      "name": "Legal Services Corporation",
+      "cat": "Legal Aid",
+      "desc": "The largest funder of free civil legal aid in the U.S.",
+      "url": "lsc.gov",
+      "note": ""
+    },
+    {
+      "name": "NAACP Legal Defense Fund",
+      "cat": "Legal Aid",
+      "desc": "Racial justice litigation and advocacy through law.",
+      "url": "naacpldf.org",
+      "note": ""
+    },
+    {
+      "name": "Lambda Legal",
+      "cat": "Legal Aid",
+      "desc": "Legal advocacy for LGBTQ+ people and people living with HIV.",
+      "url": "lambdalegal.org",
+      "note": ""
+    },
+    {
+      "name": "National Women's Law Center",
+      "cat": "Legal Aid",
+      "desc": "Legal advocacy and resources for gender equity across sectors.",
+      "url": "nwlc.org",
+      "note": ""
+    },
+    {
+      "name": "Disability Rights Advocates",
+      "cat": "Legal Aid",
+      "desc": "Non-profit disability rights legal center representing people with all disabilities.",
+      "url": "dralegal.org",
+      "note": ""
+    },
+    {
+      "name": "Crisis Text Line",
+      "cat": "Mental Health",
+      "desc": "Free, 24/7 crisis support by text with trained counselors.",
+      "url": "crisistextline.org",
+      "note": "Text HOME to 741741"
+    },
+    {
+      "name": "988 Suicide & Crisis Lifeline",
+      "cat": "Mental Health",
+      "desc": "Free crisis support by phone or chat, available 24/7.",
+      "url": "988lifeline.org",
+      "note": "Call or text 988"
+    },
+    {
+      "name": "SAMHSA National Helpline",
+      "cat": "Mental Health",
+      "desc": "Free, confidential treatment referrals for mental health and substance use.",
+      "url": "samhsa.gov",
+      "note": "1-800-662-4357"
+    },
+    {
+      "name": "The Trevor Project",
+      "cat": "Mental Health",
+      "desc": "Crisis intervention and suicide prevention for LGBTQ+ youth.",
+      "url": "thetrevorproject.org",
+      "note": "1-866-488-7386"
+    },
+    {
+      "name": "Trans Lifeline",
+      "cat": "Mental Health",
+      "desc": "Trans-led peer support hotline run by and for trans people.",
+      "url": "translifeline.org",
+      "note": "US: 877-565-8860"
+    },
+    {
+      "name": "Therapy for Black Girls",
+      "cat": "Mental Health",
+      "desc": "Directory of therapists and resources for Black women and girls.",
+      "url": "therapyforblackgirls.com",
+      "note": ""
+    }
+  ]
+}
