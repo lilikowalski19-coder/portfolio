@@ -4,7 +4,7 @@ import homeData from "../content/home.json";
 import workData from "../content/work.json";
 
 const workItems = workData.projects.slice(0, 3);
-const { featuredBeliefs, gridBeliefs, process: processSteps } = homeData;
+const { featuredBeliefs, gridBeliefs, process: processSteps, cvFile } = homeData as typeof homeData & { cvFile?: string };
 
 export default function Home() {
   return (
@@ -143,7 +143,7 @@ export default function Home() {
               {[
                 { label: "lilianakowalskipolicy@gmail.com", href: "mailto:lilianakowalskipolicy@gmail.com", arrow: "↗" },
                 { label: "LinkedIn", href: "https://linkedin.com/in/liliana-kowalski", arrow: "↗" },
-                { label: "Download CV", href: "/LilianaKowalski_CV.pdf", arrow: "↓" },
+                { label: "Download CV", href: cvFile || "/LilianaKowalski_CV.pdf", arrow: "↓" },
               ].map((item) => (
                 <a
                   key={item.label}

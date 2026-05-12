@@ -33,6 +33,11 @@ var config_default = defineConfig({
             list: true,
             ui: { itemProps: (item) => ({ label: item?.title || "Untitled project" }) },
             fields: [
+              {
+                type: "image",
+                name: "cover",
+                label: "Cover image (optional)"
+              },
               { type: "string", name: "num", label: "Number (e.g. 01)" },
               { type: "string", name: "category", label: "Category (e.g. Senior Thesis \xB7 2026)" },
               { type: "string", name: "title", label: "Title" },
@@ -53,6 +58,16 @@ var config_default = defineConfig({
                 name: "method",
                 label: "Methods",
                 list: true
+              },
+              {
+                type: "string",
+                name: "url",
+                label: "External link (e.g. paper, publication URL \u2014 leave blank if none)"
+              },
+              {
+                type: "image",
+                name: "attachment",
+                label: "Upload PDF or document (leave blank if none)"
               }
             ]
           }
@@ -145,6 +160,11 @@ var config_default = defineConfig({
           allowedActions: { create: false, delete: false }
         },
         fields: [
+          {
+            type: "image",
+            name: "cvFile",
+            label: "CV / Resume PDF (upload to update the download link)"
+          },
           {
             type: "string",
             name: "featuredBeliefs",

@@ -1,0 +1,51 @@
+fragment WorkParts on Work {
+  __typename
+  projects {
+    __typename
+    cover
+    num
+    category
+    title
+    desc
+    finding
+    method
+    url
+    attachment
+  }
+}
+
+fragment ViewsParts on Views {
+  __typename
+  intro
+  views {
+    __typename
+    topic
+    headline
+    body
+  }
+}
+
+fragment ResourcesParts on Resources {
+  __typename
+  resources {
+    __typename
+    name
+    cat
+    desc
+    url
+    note
+  }
+}
+
+fragment HomeParts on Home {
+  __typename
+  cvFile
+  featuredBeliefs
+  gridBeliefs
+  process {
+    __typename
+    num
+    title
+    desc
+  }
+}

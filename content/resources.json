@@ -3,36 +3,36 @@
     {
       "name": "Planned Parenthood",
       "cat": "Reproductive Care",
-      "desc": "Comprehensive reproductive healthcare, telehealth, and referrals nationwide.",
-      "url": "plannedparenthood.org",
-      "note": "Find a health center"
+      "desc": "Comprehensive reproductive healthcare, sexual education, and state affiliates nationwide.",
+      "url": "https://www.plannedparenthood.org/get-care/our-services",
+      "note": "Choose telehealth or visit a health center in person. Planned Parenthood meets you where you are, to get you the care you need."
     },
     {
       "name": "National Abortion Federation Hotline",
       "cat": "Reproductive Care",
-      "desc": "Financial assistance and logistical support for people seeking abortion care.",
-      "url": "prochoice.org",
+      "desc": "Free financial assistance and logistical support for people seeking abortion care.",
+      "url": "https://nationalabortionfederation.org/naf-hotline/",
       "note": "1-800-772-9100"
     },
     {
       "name": "National Network of Abortion Funds",
       "cat": "Reproductive Care",
-      "desc": "Connects people to local funds covering abortion costs, travel, and lodging.",
-      "url": "abortionfunds.org",
+      "desc": "Connects people to abortion funds, trustworthy clinics, information on Medicaid coverage, and more.",
+      "url": "https://abortionfunds.org/need-an-abortion/",
       "note": ""
     },
     {
-      "name": "Aid Access",
+      "name": "Reproductive Freedom For All",
       "cat": "Reproductive Care",
-      "desc": "Telehealth consultations and medication abortion by mail for people in the U.S.",
-      "url": "aidaccess.org",
-      "note": ""
+      "desc": "Information on providers, information and advice, abortion funds, legal advocacy, and more.",
+      "url": "https://reproductivefreedomforall.org/resources/resources-for-accessing-abortion-care/",
+      "note": "Formerly NARAL Pro-Choice America"
     },
     {
-      "name": "If/When/How",
+      "name": "Repro Legal Helpline",
       "cat": "Reproductive Care",
-      "desc": "Reproductive justice legal support and a legal defense hotline.",
-      "url": "ifwhenhow.org",
+      "desc": "Confidential and free legal services and emergency support.",
+      "url": "reprolegalhelpline.org/",
       "note": "Repro Legal Helpline: 1-844-868-2812"
     },
     {

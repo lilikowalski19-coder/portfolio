@@ -2,28 +2,32 @@
   "projects": [
     {
       "num": "01",
-      "category": "Senior Thesis · 2026",
+      "category": "Senior Honors Thesis · 2026",
       "title": "Networks of Influence: Legislative Text Diffusion in State Abortion Policy After Dobbs",
-      "desc": "A computational analysis of 188 state abortion bills introduced in 2023, tracing how legislative templates spread through advocacy networks following Dobbs v. Jackson Women's Health Organization. Using TF-IDF text similarity across 104,000+ n-gram features, the study maps diffusion patterns and identifies the structural factors that shape legislative novelty across states.",
+      "desc": "This thesis examines how abortion-related legislation diffused across U.S. states in\nthe first full legislative year after Dobbs v. Jackson Women’s Health Organization\n(2022). Drawing on a corpus of 188 enacted bills across 46 states, it uses compu-\ntational text analysis—TF–IDF cosine similarity computed across 104,445 unique\nn-grams—together with bill-level and dyadic regression to identify the structural pre-\ndictors of textual convergence.",
+      "finding": "Three findings invert conventional expectations. First, protective coalitions, not restrictive ones, deployed standardized legislative templates most aggressively in 2023: protective bills are significantly less novel than neutral bills (β=−0.076, p= 0.022), while restrictive bills are statistically indistinguishable from the neutral baseline. Second, the highest textual convergence across state lines coexists with a near-complete absence of direct PAC contributions between coordinated legislators, indicating that diffusion operates through informational rather than financial channels. Third, at the state-pair level, shared advocacy organization co-presence (PAC Jaccard β = +0.039, p < 0.001) and shared protective coalition membership (β = +0.037, p<0.001) predict textual similarity while geographic contiguity is null (β = +0.003, p= 0.734).",
       "method": [
+        "Constitutional Vacuum Diffusion",
         "Computational Text Analysis",
         "TF-IDF Vectorization",
         "OLS Regression",
-        "Clustered SE by State",
         "Policy Diffusion Theory"
       ],
-      "finding": "Protective bills show coordinated diffusion through national advocacy networks. Professional legislatures adapt rather than copy. Both unified Democratic and unified Republican governments produce more novel legislation than divided ones."
+      "url": "https://similaritynetwork.tiiny.site",
+      "attachment": "/Networks of Influence 2026.pdf"
     },
     {
       "num": "02",
       "category": "Policy Paper · 2025",
-      "title": "Mandatory Waiting Periods and Abortion Access",
+      "title": "Time as a Racialized Barrier: How Mandatory Waiting Periods Function as Gatekeeping Mechanisms in Abortion Access",
       "desc": "An analysis of mandatory waiting period requirements and their documented effects on abortion access, procedure delays, and health outcomes — with focus on the compounded burdens placed on patients in states with limited provider availability.",
+      "finding": "",
       "method": [
-        "Policy Analysis",
-        "Literature Review"
+        "Qualitative Meta-Analysis",
+        "Structural Racial Barriers",
+        "Cascade Burden"
       ],
-      "finding": ""
+      "attachment": "/Kowalski Mandatory Waiting Paper.pdf"
     }
   ]
 }
