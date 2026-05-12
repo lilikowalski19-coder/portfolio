@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Cross-State Similarity Network — Post-Dobbs Reproductive Policy</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.8.5/d3.min.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,400;0,500;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #FAF7F2;
+    --surface: #FFFFFF;
+    --ink: #1A1F2E;
+    --ink-light: #4A5568;
+    --ink-faint: #8B95A7;
+    --rule: #D8D3CA;
+    --prot: #2166AC;
+    --prot-light: #D1E5F0;
+    --rest: #B2182B;
+    --rest-light: #FDDBC7;
+    --neut: #878787;
+    --neut-light: #E5E5E5;
+    --accent: #8B4513;
+    --highlight: #FFF8DC;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'IBM Plex Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    font-size: 14px;
+    line-height: 1.5;
+    overflow: hidden;
+  }
+
+  .app {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    height: 100vh;
+    width: 100vw;
+  }
+
+  /* ============ MAIN CANVAS ============ */
+  .canvas-wrap {
+    position: relative;
+    background: var(--bg);
+    overflow: hidden;
+    border-right: 1px solid var(--rule);
+  }
+
+  .title-overlay {
+    position: absolute;
+    top: 24px;
+    left: 32px;
+    z-index: 10;
+    max-width: 560px;
+    pointer-events: none;
+  }
+
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 6px;
+  }
+
+  h1.title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 26px;
+    line-height: 1.15;
+    color: var(--ink);
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+
+  h1.title em {
+    font-style: italic;
+    font-weight: 500;
+  }
+
+  .subtitle {
+    font-size: 12.5px;
+    color: var(--ink-light);
+    font-style: italic;
+  }
+
+  svg {
+    width: 100%;
+    height: 100%;
+    display: block;
+    cursor: grab;
+  }
+  svg:active { cursor: grabbing; }
+
+  .link {
+    stroke: var(--ink-light);
+    stroke-opacity: 0.35;
+    transition: stroke-opacity 0.2s, stroke-width 0.2s;
+  }
+  .link.highlighted {
+    stroke-opacity: 1;
+  }
+  .link.dimmed {
+    stroke-opacity: 0.04;
+  }
+  .link.anchor {
+    stroke: #08306B;
+    stroke-opacity: 0.9;
+  }
+
+  .node {
+    cursor: pointer;
+    stroke: var(--bg);
+    stroke-width: 1.8px;
+    transition: stroke 0.15s, stroke-width 0.15s, opacity 0.2s;
+  }
+  .node:hover {
+    stroke: var(--ink);
+    stroke-width: 2.5px;
+  }
+  .node.selected {
+    stroke: var(--ink);
+    stroke-width: 3px;
+  }
+  .node.dimmed {
+    opacity: 0.15;
+  }
+  .node.neighbor {
+    stroke: var(--ink);
+    stroke-width: 2px;
+  }
+
+  .label {
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 10.5px;
+    font-weight: 500;
+    fill: var(--ink);
+    pointer-events: none;
+    text-shadow: 0 0 3px var(--bg), 0 0 3px var(--bg), 0 0 3px var(--bg);
+  }
+  .label.dimmed { opacity: 0.15; }
+
+  /* ============ CONTROLS BAR (bottom) ============ */
+  .controls {
+    position: absolute;
+    bottom: 20px;
+    left: 32px;
+    right: 32px;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    padding: 18px 22px;
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr auto;
+    gap: 28px;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(26, 31, 46, 0.06);
+  }
+
+  .control-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .control-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+  }
+
+  .slider-wrap {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  input[type="range"] {
+    flex: 1;
+    -webkit-appearance: none;
+    height: 3px;
+    background: var(--rule);
+    outline: none;
+    border-radius: 0;
+  }
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--ink);
+    cursor: pointer;
+    transition: transform 0.1s;
+  }
+  input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+  }
+  input[type="range"]::-moz-range-thumb {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--ink);
+    cursor: pointer;
+    border: none;
+  }
+
+  .slider-value {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--ink);
+    min-width: 44px;
+    text-align: right;
+  }
+
+  .filter-pills {
+    display: flex;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .pill {
+    padding: 5px 11px;
+    border: 1px solid var(--rule);
+    background: transparent;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11.5px;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.15s;
+    border-radius: 999px;
+    color: var(--ink-light);
+  }
+  .pill:hover { border-color: var(--ink); color: var(--ink); }
+  .pill.active {
+    background: var(--ink);
+    border-color: var(--ink);
+    color: var(--bg);
+  }
+  .pill[data-dir="Protective"].active { background: var(--prot); border-color: var(--prot); }
+  .pill[data-dir="Restrictive"].active { background: var(--rest); border-color: var(--rest); }
+  .pill[data-dir="Neutral"].active { background: var(--neut); border-color: var(--neut); }
+
+  .search-box {
+    position: relative;
+  }
+  .search-box input {
+    width: 100%;
+    padding: 7px 10px;
+    border: 1px solid var(--rule);
+    background: var(--bg);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 12.5px;
+    color: var(--ink);
+    outline: none;
+    transition: border-color 0.15s;
+  }
+  .search-box input:focus { border-color: var(--ink); }
+
+  .reset-btn {
+    padding: 8px 16px;
+    background: var(--ink);
+    color: var(--bg);
+    border: none;
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background 0.15s;
+  }
+  .reset-btn:hover { background: var(--accent); }
+
+  /* ============ SIDEBAR ============ */
+  .sidebar {
+    background: var(--surface);
+    overflow-y: auto;
+    padding: 28px 26px;
+    font-size: 13px;
+  }
+
+  .sidebar-section { margin-bottom: 28px; }
+
+  .sidebar-section h3 {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 10px;
+    font-weight: 500;
+  }
+
+  /* Stats panel */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+  }
+  .stat {
+    background: var(--surface);
+    padding: 12px 14px;
+  }
+  .stat-value {
+    font-family: 'Fraunces', serif;
+    font-size: 22px;
+    font-weight: 600;
+    color: var(--ink);
+    line-height: 1;
+  }
+  .stat-label {
+    font-size: 10.5px;
+    color: var(--ink-faint);
+    margin-top: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  /* Selected bill panel */
+  .selected-panel {
+    background: var(--highlight);
+    border: 1px solid var(--accent);
+    padding: 18px;
+    margin-bottom: 18px;
+  }
+  .selected-placeholder {
+    padding: 22px 18px;
+    text-align: center;
+    color: var(--ink-faint);
+    font-size: 12px;
+    font-style: italic;
+    line-height: 1.6;
+    border: 1px dashed var(--rule);
+  }
+
+  .bill-name {
+    font-family: 'Fraunces', serif;
+    font-size: 19px;
+    font-weight: 600;
+    line-height: 1.2;
+    margin-bottom: 10px;
+  }
+
+  .bill-meta {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 4px 14px;
+    font-size: 11.5px;
+  }
+  .bill-meta dt {
+    color: var(--ink-faint);
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9.5px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding-top: 2px;
+  }
+  .bill-meta dd { color: var(--ink); font-weight: 500; }
+
+  .dir-badge {
+    display: inline-block;
+    padding: 2px 8px;
+    font-size: 10.5px;
+    font-weight: 500;
+    border-radius: 2px;
+  }
+  .dir-badge.Protective { background: var(--prot-light); color: var(--prot); }
+  .dir-badge.Restrictive { background: var(--rest-light); color: var(--rest); }
+  .dir-badge.Neutral { background: var(--neut-light); color: var(--neut); }
+
+  /* Partners list */
+  .partners-list {
+    list-style: none;
+  }
+  .partner-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--rule);
+    font-size: 12px;
+    cursor: pointer;
+    transition: background 0.12s;
+    gap: 10px;
+  }
+  .partner-item:hover { background: var(--bg); }
+  .partner-item:first-child { border-top: 1px solid var(--rule); }
+
+  .partner-name {
+    font-weight: 500;
+    line-height: 1.3;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .partner-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .partner-sim {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    font-weight: 600;
+  }
+
+  .sim-bar-wrap {
+    grid-column: 1 / -1;
+    margin-top: 5px;
+    height: 3px;
+    background: var(--neut-light);
+    overflow: hidden;
+  }
+  .sim-bar-fill { height: 100%; }
+
+  /* Legend */
+  .legend-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 7px;
+    font-size: 11.5px;
+    color: var(--ink-light);
+  }
+  .legend-dot {
+    width: 11px;
+    height: 11px;
+    border-radius: 50%;
+  }
+  .legend-line {
+    width: 22px;
+    height: 2px;
+    background: var(--ink-light);
+  }
+  .legend-line.thick { height: 4px; background: #08306B; }
+
+  /* Instructions */
+  .instructions {
+    background: var(--bg);
+    border-left: 3px solid var(--accent);
+    padding: 12px 14px;
+    font-size: 11.5px;
+    line-height: 1.55;
+    color: var(--ink-light);
+  }
+  .instructions strong { color: var(--ink); font-weight: 600; }
+  .instructions kbd {
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    padding: 1px 5px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    border-radius: 2px;
+  }
+
+  /* Tooltip */
+  .tooltip {
+    position: absolute;
+    pointer-events: none;
+    background: var(--ink);
+    color: var(--bg);
+    padding: 8px 11px;
+    font-size: 11.5px;
+    font-weight: 500;
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.15s;
+    max-width: 240px;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.2);
+  }
+  .tooltip-name {
+    font-family: 'Fraunces', serif;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 3px;
+  }
+  .tooltip-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    opacity: 0.7;
+    margin-top: 4px;
+  }
+
+  /* Anchor callout */
+  .anchor-callout {
+    position: absolute;
+    z-index: 5;
+    background: var(--highlight);
+    border: 1px solid var(--accent);
+    padding: 7px 11px;
+    font-size: 10.5px;
+    font-weight: 600;
+    color: var(--accent);
+    pointer-events: none;
+    font-family: 'IBM Plex Mono', monospace;
+    letter-spacing: 0.02em;
+    opacity: 0;
+    transition: opacity 0.3s 0.5s;
+  }
+  .anchor-callout.visible { opacity: 1; }
+
+  /* Scrollbar */
+  .sidebar::-webkit-scrollbar { width: 6px; }
+  .sidebar::-webkit-scrollbar-track { background: transparent; }
+  .sidebar::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 3px; }
+  .sidebar::-webkit-scrollbar-thumb:hover { background: var(--ink-faint); }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- MAIN CANVAS -->
+  <div class="canvas-wrap" id="canvasWrap">
+    <div class="title-overlay">
+      <div class="eyebrow">Networks of Influence · Chapter 4 Findings</div>
+      <h1 class="title">Cross-State Textual Similarity in Post-<em>Dobbs</em> Reproductive Policy</h1>
+      <div class="subtitle">Distance between bills is inverse to their similarity. Drag to explore. Click any bill to see its partners.</div>
+    </div>
+
+    <svg id="graph"></svg>
+
+    <div class="anchor-callout" id="anchorCallout">
+      ★ anchor pair &nbsp;·&nbsp; 0.807
+    </div>
+
+    <div class="controls">
+      <div class="control-group">
+        <div class="control-label">Similarity threshold</div>
+        <div class="slider-wrap">
+          <input type="range" id="threshold" min="0.20" max="0.60" step="0.01" value="0.25">
+          <div class="slider-value" id="thresholdVal">0.25</div>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">Show directions</div>
+        <div class="filter-pills" id="directionFilters">
+          <button class="pill active" data-dir="Protective">Protective</button>
+          <button class="pill active" data-dir="Restrictive">Restrictive</button>
+          <button class="pill active" data-dir="Neutral">Neutral</button>
+        </div>
+      </div>
+
+      <div class="control-group">
+        <div class="control-label">Find a bill</div>
+        <div class="search-box">
+          <input type="text" id="search" placeholder="e.g. Vermont SB 37" list="billList">
+          <datalist id="billList"></datalist>
+        </div>
+      </div>
+
+      <button class="reset-btn" id="resetBtn">Reset view</button>
+    </div>
+  </div>
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="sidebar-section">
+      <h3>Corpus overview</h3>
+      <div class="stats-grid">
+        <div class="stat">
+          <div class="stat-value">188</div>
+          <div class="stat-label">Bills, 46 states</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value">0.769</div>
+          <div class="stat-label">Mean novelty</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="visibleNodes">—</div>
+          <div class="stat-label">Visible bills</div>
+        </div>
+        <div class="stat">
+          <div class="stat-value" id="visibleEdges">—</div>
+          <div class="stat-label">Visible edges</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section" id="selectedSection">
+      <h3>Selected bill</h3>
+      <div id="selectedContainer">
+        <div class="selected-placeholder">
+          Click any node in the graph to see its cross-state similarity partners sorted by strength.
+        </div>
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>How to read this graph</h3>
+      <div class="instructions">
+        <strong>Distance means similarity.</strong> Nodes pulled close together share the most legislative text. The
+        <strong>Nevada–Washington</strong> pair (similarity = 0.807) will sit essentially on top of each other.<br><br>
+        <strong>Edge thickness</strong> scales with similarity score.<br><br>
+        <strong>Node size</strong> scales with cross-state novelty — bigger nodes are more textually distinct from the corpus average.<br><br>
+        Use <kbd>threshold</kbd> to filter weak edges, <kbd>direction</kbd> pills to isolate coalitions, and <kbd>search</kbd> to jump to a specific bill.
+      </div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>Legend</h3>
+      <div class="legend-row"><span class="legend-dot" style="background:#2166AC"></span>Protective (n = 73)</div>
+      <div class="legend-row"><span class="legend-dot" style="background:#B2182B"></span>Restrictive (n = 88)</div>
+      <div class="legend-row"><span class="legend-dot" style="background:#878787"></span>Neutral (n = 27)</div>
+      <div class="legend-row"><span class="legend-line thick"></span>Similarity ≥ 0.60</div>
+      <div class="legend-row"><span class="legend-line"></span>Similarity 0.25–0.60</div>
+    </div>
+
+    <div class="sidebar-section">
+      <h3>Source</h3>
+      <div style="font-size:11px; color:var(--ink-faint); line-height:1.55;">
+        SimilarityMatrix_FINAL.csv &nbsp;·&nbsp; APRIL QUANT DEFINITIVE<br>
+        Cross-state pairs only (same-state companions excluded)<br>
+        Layout: D3 force simulation weighted by similarity²
+      </div>
+    </div>
+
+  </aside>
+</div>
+
+<div class="tooltip" id="tooltip"></div>
+
+<script>
+const DATA = {"nodes":[{"id":"Alabama SB 261","state":"Alabama","direction":"Restrictive","mechanism":"Funding","novelty":0.628},{"id":"Arizona HB 2564","state":"Arizona","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.6618},{"id":"Arizona SB 1473","state":"Arizona","direction":"Restrictive","mechanism":"Funding","novelty":0.6087},{"id":"Arkansas HR 1010","state":"Arkansas","direction":"Restrictive","mechanism":"Definitional","novelty":0.6354},{"id":"Arkansas SB 286","state":"Arkansas","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.7113},{"id":"Arkansas SB 446","state":"Arkansas","direction":"Restrictive","mechanism":"Definitional","novelty":0.7913},{"id":"Arkansas SB 465","state":"Arkansas","direction":"Restrictive","mechanism":"Funding","novelty":0.7861},{"id":"Arkansas SB 495","state":"Arkansas","direction":"Restrictive","mechanism":"Criminal","novelty":0.7045},{"id":"Arkansas SB 542","state":"Arkansas","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.7712},{"id":"California AB 100","state":"California","direction":"Protective","mechanism":"Funding","novelty":0.5845},{"id":"California AB 118","state":"California","direction":"Protective","mechanism":"Shield","novelty":0.7476},{"id":"California AB 1194","state":"California","direction":"Protective","mechanism":"Shield","novelty":0.6935},{"id":"California AB 3281","state":"California","direction":"Protective","mechanism":"Shield","novelty":0.7135},{"id":"California AB 352","state":"California","direction":"Protective","mechanism":"Shield","novelty":0.7256},{"id":"California AB 571","state":"California","direction":"Protective","mechanism":"Funding","novelty":0.6405},{"id":"California AR 6","state":"California","direction":"Protective","mechanism":"Constitutional","novelty":0.7357},{"id":"California SB 101","state":"California","direction":"Protective","mechanism":"Funding","novelty":0.6763},{"id":"California SB 345","state":"California","direction":"Protective","mechanism":"Shield","novelty":0.5347},{"id":"California SB 887","state":"California","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.6674},{"id":"California SR 9","state":"California","direction":"Neutral","mechanism":"Constitutional","novelty":0.7489},{"id":"Colorado HB 1218","state":"Colorado","direction":"Protective","mechanism":"Definitional","novelty":0.6727},{"id":"Colorado SB 188","state":"Colorado","direction":"Protective","mechanism":"Shield","novelty":0.5133},{"id":"Connecticut SB 3","state":"Connecticut","direction":"Protective","mechanism":"Shield","novelty":0.6287},{"id":"Florida SB 300","state":"Florida","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.7273},{"id":"Hawaii HR 107","state":"Hawaii","direction":"Protective","mechanism":"Definitional","novelty":0.7927},{"id":"Hawaii HR 118","state":"Hawaii","direction":"Neutral","mechanism":"Constitutional","novelty":0.7946},{"id":"Hawaii SB 1","state":"Hawaii","direction":"Protective","mechanism":"Shield","novelty":0.7072},{"id":"Idaho HB 374","state":"Idaho","direction":"Protective","mechanism":"Definitional","novelty":0.7162},{"id":"Idaho HJM 2","state":"Idaho","direction":"Neutral","mechanism":"Constitutional","novelty":0.7357},{"id":"Idaho SB 1044","state":"Idaho","direction":"Restrictive","mechanism":"Criminal","novelty":0.6764},{"id":"Illinois HB 1596","state":"Illinois","direction":"Restrictive","mechanism":"Definitional","novelty":0.6705},{"id":"Illinois HB 3762","state":"Illinois","direction":"Restrictive","mechanism":"Criminal","novelty":0.6715},{"id":"Illinois SB 1344","state":"Illinois","direction":"Protective","mechanism":"Shield","novelty":0.7482},{"id":"Illinois SB 1909","state":"Illinois","direction":"Protective","mechanism":"Shield","novelty":0.7325},{"id":"Iowa HB 732","state":"Iowa","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.5948},{"id":"Kansas HB 2002","state":"Kansas","direction":"Restrictive","mechanism":"Funding","novelty":0.7205},{"id":"Kansas HB 2184","state":"Kansas","direction":"Restrictive","mechanism":"Funding","novelty":0.7371},{"id":"Kansas HB 2264","state":"Kansas","direction":"Restrictive","mechanism":"Definitional","novelty":0.705},{"id":"Kansas HB 2313","state":"Kansas","direction":"Restrictive","mechanism":"Definitional","novelty":0.7537},{"id":"Kansas HB 2436","state":"Kansas","direction":"Restrictive","mechanism":"Criminal","novelty":0.7268},{"id":"Louisiana HB 1","state":"Louisiana","direction":"Restrictive","mechanism":"Funding","novelty":0.6734},{"id":"Louisiana HR 14","state":"Louisiana","direction":"Restrictive","mechanism":"Definitional","novelty":0.7913},{"id":"Louisiana SB 41","state":"Louisiana","direction":"Restrictive","mechanism":"Funding","novelty":0.7546},{"id":"Maine HB 616","state":"Maine","direction":"Protective","mechanism":"Shield","novelty":0.7344},{"id":"Maine HB 935","state":"Maine","direction":"Protective","mechanism":"Funding","novelty":0.7926},{"id":"Maryland HB 200","state":"Maryland","direction":"Neutral","mechanism":"Funding","novelty":0.6865},{"id":"Maryland SB 786","state":"Maryland","direction":"Protective","mechanism":"Shield","novelty":0.6731},{"id":"Maryland SB 859","state":"Maryland","direction":"Protective","mechanism":"Shield","novelty":0.6403},{"id":"Michigan HB 4949","state":"Michigan","direction":"Protective","mechanism":"Constitutional","novelty":0.5942},{"id":"Michigan HR 123","state":"Michigan","direction":"Protective","mechanism":"Funding","novelty":0.7273},{"id":"Michigan SB 474","state":"Michigan","direction":"Protective","mechanism":"Proc_Expansion","novelty":0.7215},{"id":"Minnesota HB 1","state":"Minnesota","direction":"Protective","mechanism":"Constitutional","novelty":0.7803},{"id":"Minnesota SB 2995","state":"Minnesota","direction":"Protective","mechanism":"Funding","novelty":0.7484},{"id":"Mississippi HB 1149","state":"Mississippi","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.7271},{"id":"Mississippi HB 1671","state":"Mississippi","direction":"Restrictive","mechanism":"Funding","novelty":0.6087},{"id":"Missouri HB 11","state":"Missouri","direction":"Neutral","mechanism":"Funding","novelty":0.7659},{"id":"Missouri HB 1155","state":"Missouri","direction":"Neutral","mechanism":"Definitional","novelty":0.5287},{"id":"Missouri HB 402","state":"Missouri","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.5833},{"id":"Missouri SB 106","state":"Missouri","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.7776},{"id":"Missouri SB 157","state":"Missouri","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.7042},{"id":"Montana HB 303","state":"Montana","direction":"Restrictive","mechanism":"Constitutional","novelty":0.7756},{"id":"Montana HB 625","state":"Montana","direction":"Neutral","mechanism":"Definitional","novelty":0.7537},{"id":"Montana HB 721","state":"Montana","direction":"Restrictive","mechanism":"Criminal","novelty":0.7922},{"id":"Montana HB 937","state":"Montana","direction":"Restrictive","mechanism":"Definitional","novelty":0.7711},{"id":"Montana SB 112","state":"Montana","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.7576},{"id":"Nebraska LB 814","state":"Nebraska","direction":"Restrictive","mechanism":"Funding","novelty":0.6734},{"id":"Nevada AB 270","state":"Nevada","direction":"Restrictive","mechanism":"Criminal","novelty":0.7433},{"id":"Nevada SB 370","state":"Nevada","direction":"Protective","mechanism":"Shield","novelty":0.1933},{"id":"Nevada SJR 7","state":"Nevada","direction":"Protective","mechanism":"Constitutional","novelty":0.5942},{"id":"New Jersey AB 3975","state":"New Jersey","direction":"Protective","mechanism":"Shield","novelty":0.7072},{"id":"New Jersey AB 5096","state":"New Jersey","direction":"Protective","mechanism":"Shield","novelty":0.6715},{"id":"New Mexico HB 7","state":"New Mexico","direction":"Protective","mechanism":"Shield","novelty":0.6273},{"id":"New Mexico SB 13","state":"New Mexico","direction":"Protective","mechanism":"Shield","novelty":0.5484},{"id":"New York AB 3003","state":"New York","direction":"Protective","mechanism":"Funding","novelty":0.5845},{"id":"New York SB 1066","state":"New York","direction":"Protective","mechanism":"Shield","novelty":0.6589},{"id":"North Carolina HB 190","state":"North Carolina","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.7545},{"id":"North Carolina HB 259","state":"North Carolina","direction":"Restrictive","mechanism":"Funding","novelty":0.7151},{"id":"North Carolina SB 20","state":"North Carolina","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.6655},{"id":"North Dakota SB 2150","state":"North Dakota","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.6655},{"id":"North Dakota SB 2225","state":"North Dakota","direction":"Restrictive","mechanism":"Definitional","novelty":0.7617},{"id":"Oklahoma SB 293","state":"Oklahoma","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.7751},{"id":"Oregon HB 2002","state":"Oregon","direction":"Protective","mechanism":"Shield","novelty":0.7619},{"id":"Pennsylvania HB 611","state":"Pennsylvania","direction":"Restrictive","mechanism":"Funding","novelty":0.5773},{"id":"South Carolina SB 474","state":"South Carolina","direction":"Restrictive","mechanism":"Criminal","novelty":0.5948},{"id":"Texas SB 24","state":"Texas","direction":"Restrictive","mechanism":"Funding","novelty":0.7385},{"id":"Texas SB 30","state":"Texas","direction":"Restrictive","mechanism":"Funding","novelty":0.7776},{"id":"Utah HB 26","state":"Utah","direction":"Restrictive","mechanism":"Funding","novelty":0.7494},{"id":"Utah HB 467","state":"Utah","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.7035},{"id":"Utah SB 208","state":"Utah","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.7827},{"id":"Utah SB 97","state":"Utah","direction":"Restrictive","mechanism":"Funding","novelty":0.628},{"id":"Vermont SB 37","state":"Vermont","direction":"Protective","mechanism":"Constitutional","novelty":0.5133},{"id":"Virginia SB 1538","state":"Virginia","direction":"Protective","mechanism":"Funding","novelty":0.7698},{"id":"Virginia SB 798","state":"Virginia","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.6705},{"id":"Virginia SB 975","state":"Virginia","direction":"Restrictive","mechanism":"Definitional","novelty":0.5287},{"id":"Washington HB 1155","state":"Washington","direction":"Protective","mechanism":"Shield","novelty":0.1933},{"id":"Washington SB 5187","state":"Washington","direction":"Protective","mechanism":"Funding","novelty":0.5773},{"id":"Washington SB 5242","state":"Washington","direction":"Protective","mechanism":"Funding","novelty":0.7926},{"id":"West Virginia HB 2002","state":"West Virginia","direction":"Restrictive","mechanism":"Funding","novelty":0.6354},{"id":"West Virginia HB 3302","state":"West Virginia","direction":"Neutral","mechanism":"Criminal","novelty":0.7592},{"id":"West Virginia SB 552","state":"West Virginia","direction":"Restrictive","mechanism":"Criminal","novelty":0.7937},{"id":"Wisconsin SB 196","state":"Wisconsin","direction":"Restrictive","mechanism":"Proc_Ban","novelty":0.564},{"id":"Wyoming HB 152","state":"Wyoming","direction":"Restrictive","mechanism":"Criminal","novelty":0.7643}],"edges":[{"source":"Alabama SB 261","target":"Utah SB 97","similarity":0.372},{"source":"Arizona SB 1473","target":"Idaho SB 1044","similarity":0.2087},{"source":"Arizona SB 1473","target":"Kansas HB 2002","similarity":0.2469},{"source":"Arizona SB 1473","target":"Mississippi HB 1671","similarity":0.3913},{"source":"Arizona SB 1473","target":"New Jersey AB 5096","similarity":0.2353},{"source":"Arizona SB 1473","target":"Virginia SB 798","similarity":0.2543},{"source":"Arizona HB 2564","target":"California SB 887","similarity":0.2538},{"source":"Arizona HB 2564","target":"Idaho SB 1044","similarity":0.2426},{"source":"Arizona HB 2564","target":"Michigan SB 474","similarity":0.2441},{"source":"Arizona HB 2564","target":"Minnesota SB 2995","similarity":0.2229},{"source":"Arizona HB 2564","target":"Missouri HB 1155","similarity":0.3091},{"source":"Arizona HB 2564","target":"Missouri HB 402","similarity":0.3289},{"source":"Arizona HB 2564","target":"Missouri SB 157","similarity":0.2771},{"source":"Arizona HB 2564","target":"Montana SB 112","similarity":0.2424},{"source":"Arizona HB 2564","target":"Nevada AB 270","similarity":0.2567},{"source":"Arizona HB 2564","target":"New Jersey AB 5096","similarity":0.2528},{"source":"Arizona HB 2564","target":"Utah HB 467","similarity":0.2265},{"source":"Arizona HB 2564","target":"Utah SB 208","similarity":0.2173},{"source":"Arizona HB 2564","target":"Virginia SB 975","similarity":0.3382},{"source":"Arkansas HR 1010","target":"West Virginia HB 2002","similarity":0.3646},{"source":"Arkansas SB 286","target":"West Virginia HB 2002","similarity":0.2887},{"source":"Arkansas SB 446","target":"Louisiana HR 14","similarity":0.2087},{"source":"Arkansas SB 495","target":"Illinois HB 3762","similarity":0.2955},{"source":"Arkansas SB 495","target":"Kansas HB 2436","similarity":0.2054},{"source":"Arkansas SB 495","target":"New Jersey AB 5096","similarity":0.2467},{"source":"Arkansas SB 542","target":"South Carolina SB 474","similarity":0.2288},{"source":"Arkansas SB 465","target":"Illinois HB 1596","similarity":0.2055},{"source":"Arkansas SB 465","target":"Minnesota SB 2995","similarity":0.2139},{"source":"California AR 6","target":"Idaho HJM 2","similarity":0.2643},{"source":"California SR 9","target":"Idaho HJM 2","similarity":0.2511},{"source":"California SR 9","target":"Michigan HR 123","similarity":0.2408},{"source":"California AB 100","target":"Louisiana HB 1","similarity":0.2055},{"source":"California AB 100","target":"Nebraska LB 814","similarity":0.2517},{"source":"California AB 100","target":"New York AB 3003","similarity":0.4155},{"source":"California AB 100","target":"North Carolina HB 259","similarity":0.2849},{"source":"California AB 100","target":"Pennsylvania HB 611","similarity":0.3066},{"source":"California SB 101","target":"Kansas HB 2184","similarity":0.2088},{"source":"California SB 101","target":"Louisiana HB 1","similarity":0.2721},{"source":"California SB 101","target":"Nebraska LB 814","similarity":0.2639},{"source":"California SB 101","target":"New York AB 3003","similarity":0.3237},{"source":"California SB 101","target":"North Carolina HB 259","similarity":0.2803},{"source":"California SB 101","target":"Pennsylvania HB 611","similarity":0.2841},{"source":"California SB 101","target":"Washington SB 5187","similarity":0.2018},{"source":"California AB 118","target":"Colorado HB 1218","similarity":0.2293},{"source":"California AB 118","target":"Illinois HB 1596","similarity":0.2094},{"source":"California AB 118","target":"Maryland SB 786","similarity":0.2109},{"source":"California AB 118","target":"Minnesota SB 2995","similarity":0.2404},{"source":"California AB 118","target":"Missouri HB 402","similarity":0.2315},{"source":"California AB 118","target":"Missouri SB 106","similarity":0.2062},{"source":"California AB 118","target":"North Carolina HB 190","similarity":0.2455},{"source":"California AB 118","target":"Vermont SB 37","similarity":0.2246},{"source":"California AB 118","target":"Virginia SB 798","similarity":0.2163},{"source":"California AB 118","target":"Virginia SB 975","similarity":0.2524},{"source":"California AB 352","target":"Maryland SB 786","similarity":0.2744},{"source":"California AB 571","target":"Colorado SB 188","similarity":0.203},{"source":"California AB 571","target":"Colorado HB 1218","similarity":0.2078},{"source":"California AB 571","target":"Maine HB 616","similarity":0.2038},{"source":"California AB 571","target":"New Mexico HB 7","similarity":0.2289},{"source":"California AB 571","target":"Vermont SB 37","similarity":0.3595},{"source":"California SB 345","target":"Colorado SB 188","similarity":0.36},{"source":"California SB 345","target":"Colorado HB 1218","similarity":0.2395},{"source":"California SB 345","target":"Hawaii SB 1","similarity":0.253},{"source":"California SB 345","target":"Maryland SB 786","similarity":0.2466},{"source":"California SB 345","target":"Maryland SB 859","similarity":0.3039},{"source":"California SB 345","target":"New Jersey AB 3975","similarity":0.2017},{"source":"California SB 345","target":"New Mexico HB 7","similarity":0.2513},{"source":"California SB 345","target":"New Mexico SB 13","similarity":0.3401},{"source":"California SB 345","target":"New York SB 1066","similarity":0.3078},{"source":"California SB 345","target":"North Carolina SB 20","similarity":0.2216},{"source":"California SB 345","target":"Oregon HB 2002","similarity":0.2067},{"source":"California SB 345","target":"Vermont SB 37","similarity":0.4653},{"source":"California SB 345","target":"Virginia SB 975","similarity":0.2625},{"source":"California AB 3281","target":"Illinois HB 1596","similarity":0.2475},{"source":"California AB 3281","target":"New Jersey AB 5096","similarity":0.2385},{"source":"California AB 3281","target":"North Carolina SB 20","similarity":0.2088},{"source":"California AB 3281","target":"Virginia SB 798","similarity":0.2865},{"source":"California AB 3281","target":"Virginia SB 975","similarity":0.2018},{"source":"California AB 1194","target":"Connecticut SB 3","similarity":0.3065},{"source":"California AB 1194","target":"Nevada SB 370","similarity":0.2342},{"source":"California AB 1194","target":"Washington HB 1155","similarity":0.3056},{"source":"California SB 887","target":"Idaho SB 1044","similarity":0.241},{"source":"California SB 887","target":"Missouri HB 1155","similarity":0.3268},{"source":"California SB 887","target":"Missouri HB 402","similarity":0.2235},{"source":"California SB 887","target":"Missouri SB 157","similarity":0.2253},{"source":"California SB 887","target":"Nevada AB 270","similarity":0.209},{"source":"California SB 887","target":"Virginia SB 798","similarity":0.217},{"source":"California SB 887","target":"Virginia SB 975","similarity":0.3326},{"source":"Colorado SB 188","target":"Maryland SB 786","similarity":0.244},{"source":"Colorado SB 188","target":"Maryland SB 859","similarity":0.3597},{"source":"Colorado SB 188","target":"New Mexico HB 7","similarity":0.2705},{"source":"Colorado SB 188","target":"New Mexico SB 13","similarity":0.4473},{"source":"Colorado SB 188","target":"New York SB 1066","similarity":0.2957},{"source":"Colorado SB 188","target":"Vermont SB 37","similarity":0.4867},{"source":"Colorado HB 1218","target":"Hawaii SB 1","similarity":0.2009},{"source":"Colorado HB 1218","target":"Maine HB 616","similarity":0.2324},{"source":"Colorado HB 1218","target":"Maryland SB 786","similarity":0.2435},{"source":"Colorado HB 1218","target":"Montana HB 303","similarity":0.2244},{"source":"Colorado HB 1218","target":"Montana HB 937","similarity":0.2066},{"source":"Colorado HB 1218","target":"New Jersey AB 3975","similarity":0.2261},{"source":"Colorado HB 1218","target":"Vermont SB 37","similarity":0.3273},{"source":"Connecticut SB 3","target":"Nevada SB 370","similarity":0.3683},{"source":"Connecticut SB 3","target":"Washington HB 1155","similarity":0.3713},{"source":"Florida SB 300","target":"Michigan HR 123","similarity":0.2727},{"source":"Hawaii SB 1","target":"New Jersey AB 3975","similarity":0.2928},{"source":"Hawaii SB 1","target":"Vermont SB 37","similarity":0.2343},{"source":"Hawaii HR 107","target":"Virginia SB 975","similarity":0.2073},{"source":"Hawaii HR 118","target":"Vermont SB 37","similarity":0.2054},{"source":"Idaho SB 1044","target":"Illinois HB 1596","similarity":0.2019},{"source":"Idaho SB 1044","target":"Illinois HB 3762","similarity":0.2031},{"source":"Idaho SB 1044","target":"Minnesota SB 2995","similarity":0.2395},{"source":"Idaho SB 1044","target":"Missouri HB 1155","similarity":0.3235},{"source":"Idaho SB 1044","target":"Missouri HB 402","similarity":0.2325},{"source":"Idaho SB 1044","target":"New Jersey AB 5096","similarity":0.3202},{"source":"Idaho SB 1044","target":"Virginia SB 798","similarity":0.239},{"source":"Idaho SB 1044","target":"Virginia SB 975","similarity":0.2283},{"source":"Idaho SB 1044","target":"Wisconsin SB 196","similarity":0.2977},{"source":"Idaho HB 374","target":"Kansas HB 2264","similarity":0.2048},{"source":"Idaho HB 374","target":"North Carolina SB 20","similarity":0.2205},{"source":"Idaho HB 374","target":"North Dakota SB 2150","similarity":0.2389},{"source":"Idaho HB 374","target":"South Carolina SB 474","similarity":0.2838},{"source":"Idaho HB 374","target":"Utah HB 467","similarity":0.2408},{"source":"Illinois HB 1596","target":"Minnesota SB 2995","similarity":0.2104},{"source":"Illinois HB 1596","target":"Mississippi HB 1149","similarity":0.2729},{"source":"Illinois HB 1596","target":"Missouri HB 402","similarity":0.2012},{"source":"Illinois HB 1596","target":"Missouri SB 106","similarity":0.2114},{"source":"Illinois HB 1596","target":"New Jersey AB 5096","similarity":0.312},{"source":"Illinois HB 1596","target":"North Carolina SB 20","similarity":0.2837},{"source":"Illinois HB 1596","target":"North Carolina HB 190","similarity":0.2077},{"source":"Illinois HB 1596","target":"North Dakota SB 2150","similarity":0.221},{"source":"Illinois HB 1596","target":"Texas SB 24","similarity":0.2615},{"source":"Illinois HB 1596","target":"Virginia SB 798","similarity":0.3295},{"source":"Illinois HB 3762","target":"Kansas HB 2436","similarity":0.2732},{"source":"Illinois HB 3762","target":"New Jersey AB 5096","similarity":0.3285},{"source":"Illinois SB 1909","target":"Minnesota HB 1","similarity":0.2078},{"source":"Illinois SB 1909","target":"Vermont SB 37","similarity":0.2675},{"source":"Illinois SB 1344","target":"Virginia SB 975","similarity":0.2518},{"source":"Iowa HB 732","target":"North Dakota SB 2150","similarity":0.2067},{"source":"Iowa HB 732","target":"South Carolina SB 474","similarity":0.4052},{"source":"Kansas HB 2313","target":"Montana HB 625","similarity":0.2463},{"source":"Kansas HB 2313","target":"North Carolina SB 20","similarity":0.2069},{"source":"Kansas HB 2184","target":"Louisiana HB 1","similarity":0.2629},{"source":"Kansas HB 2184","target":"Nebraska LB 814","similarity":0.2242},{"source":"Kansas HB 2184","target":"North Carolina HB 259","similarity":0.2008},{"source":"Kansas HB 2184","target":"Pennsylvania HB 611","similarity":0.2133},{"source":"Kansas HB 2184","target":"Washington SB 5187","similarity":0.2341},{"source":"Kansas HB 2264","target":"Montana HB 721","similarity":0.2078},{"source":"Kansas HB 2264","target":"North Carolina SB 20","similarity":0.2226},{"source":"Kansas HB 2264","target":"North Dakota SB 2150","similarity":0.2701},{"source":"Kansas HB 2264","target":"South Carolina SB 474","similarity":0.295},{"source":"Kansas HB 2264","target":"Utah HB 467","similarity":0.2223},{"source":"Kansas HB 2002","target":"Virginia SB 798","similarity":0.2795},{"source":"Louisiana SB 41","target":"Mississippi HB 1671","similarity":0.2454},{"source":"Louisiana HB 1","target":"Maryland HB 200","similarity":0.2308},{"source":"Louisiana HB 1","target":"Missouri HB 11","similarity":0.2209},{"source":"Louisiana HB 1","target":"Nebraska LB 814","similarity":0.3266},{"source":"Louisiana HB 1","target":"New York AB 3003","similarity":0.2833},{"source":"Louisiana HB 1","target":"North Carolina HB 259","similarity":0.2492},{"source":"Louisiana HB 1","target":"Pennsylvania HB 611","similarity":0.2883},{"source":"Louisiana HB 1","target":"Washington SB 5187","similarity":0.2334},{"source":"Maine HB 616","target":"Vermont SB 37","similarity":0.2656},{"source":"Maine HB 935","target":"Washington SB 5242","similarity":0.2074},{"source":"Maryland HB 200","target":"Nebraska LB 814","similarity":0.3135},{"source":"Maryland HB 200","target":"Pennsylvania HB 611","similarity":0.2792},{"source":"Maryland HB 200","target":"Washington SB 5187","similarity":0.2553},{"source":"Maryland SB 786","target":"Vermont SB 37","similarity":0.3269},{"source":"Maryland SB 786","target":"Virginia SB 975","similarity":0.2253},{"source":"Maryland SB 859","target":"New Mexico SB 13","similarity":0.2772},{"source":"Maryland SB 859","target":"New York SB 1066","similarity":0.3411},{"source":"Maryland SB 859","target":"Vermont SB 37","similarity":0.3095},{"source":"Michigan SB 474","target":"Missouri HB 402","similarity":0.2408},{"source":"Michigan SB 474","target":"Missouri SB 157","similarity":0.2104},{"source":"Michigan SB 474","target":"North Carolina SB 20","similarity":0.2652},{"source":"Michigan SB 474","target":"North Dakota SB 2150","similarity":0.2177},{"source":"Michigan SB 474","target":"Utah HB 467","similarity":0.2785},{"source":"Michigan SB 474","target":"Virginia SB 798","similarity":0.2053},{"source":"Michigan SB 474","target":"Virginia SB 975","similarity":0.2606},{"source":"Michigan HB 4949","target":"Nevada SJR 7","similarity":0.4058},{"source":"Minnesota HB 1","target":"Nevada SJR 7","similarity":0.2197},{"source":"Minnesota SB 2995","target":"Missouri HB 402","similarity":0.2504},{"source":"Minnesota SB 2995","target":"Missouri SB 106","similarity":0.2224},{"source":"Minnesota SB 2995","target":"New Jersey AB 5096","similarity":0.2375},{"source":"Minnesota SB 2995","target":"Virginia SB 798","similarity":0.2223},{"source":"Minnesota SB 2995","target":"Virginia SB 975","similarity":0.2516},{"source":"Minnesota SB 2995","target":"Virginia SB 1538","similarity":0.2302},{"source":"Mississippi HB 1149","target":"Virginia SB 798","similarity":0.2042},{"source":"Missouri HB 11","target":"Nebraska LB 814","similarity":0.2341},{"source":"Missouri HB 11","target":"Pennsylvania HB 611","similarity":0.2165},{"source":"Missouri HB 1155","target":"Nevada AB 270","similarity":0.2158},{"source":"Missouri HB 1155","target":"New Jersey AB 5096","similarity":0.2032},{"source":"Missouri HB 1155","target":"Virginia SB 975","similarity":0.4713},{"source":"Missouri HB 1155","target":"Wisconsin SB 196","similarity":0.436},{"source":"Missouri HB 402","target":"Montana HB 937","similarity":0.2173},{"source":"Missouri HB 402","target":"Nevada AB 270","similarity":0.2139},{"source":"Missouri HB 402","target":"New Jersey AB 5096","similarity":0.2362},{"source":"Missouri HB 402","target":"North Carolina SB 20","similarity":0.2616},{"source":"Missouri HB 402","target":"North Carolina HB 190","similarity":0.2382},{"source":"Missouri HB 402","target":"Utah HB 467","similarity":0.2574},{"source":"Missouri HB 402","target":"Virginia SB 798","similarity":0.2409},{"source":"Missouri HB 402","target":"Virginia SB 975","similarity":0.4167},{"source":"Missouri SB 106","target":"Virginia SB 798","similarity":0.2067},{"source":"Missouri SB 106","target":"Virginia SB 975","similarity":0.2078},{"source":"Missouri SB 157","target":"New Jersey AB 5096","similarity":0.2232},{"source":"Missouri SB 157","target":"Virginia SB 975","similarity":0.2958},{"source":"Montana SB 112","target":"Utah SB 208","similarity":0.2088},{"source":"Montana SB 112","target":"Virginia SB 975","similarity":0.2249},{"source":"Montana HB 625","target":"North Carolina SB 20","similarity":0.215},{"source":"Montana HB 721","target":"South Carolina SB 474","similarity":0.204},{"source":"Montana HB 937","target":"Oklahoma SB 293","similarity":0.2249},{"source":"Montana HB 937","target":"Utah HB 467","similarity":0.2213},{"source":"Montana HB 937","target":"Virginia SB 798","similarity":0.2253},{"source":"Montana HB 937","target":"Virginia SB 975","similarity":0.2289},{"source":"Nebraska LB 814","target":"New York AB 3003","similarity":0.2907},{"source":"Nebraska LB 814","target":"North Carolina HB 259","similarity":0.2672},{"source":"Nebraska LB 814","target":"Pennsylvania HB 611","similarity":0.3199},{"source":"Nebraska LB 814","target":"Washington SB 5187","similarity":0.2501},{"source":"Nevada AB 270","target":"Virginia SB 975","similarity":0.2074},{"source":"Nevada SB 370","target":"Washington HB 1155","similarity":0.8067},{"source":"New Jersey AB 5096","target":"North Carolina SB 20","similarity":0.2476},{"source":"New Jersey AB 5096","target":"North Carolina HB 190","similarity":0.2092},{"source":"New Jersey AB 5096","target":"North Dakota SB 2225","similarity":0.2383},{"source":"New Jersey AB 5096","target":"Virginia SB 798","similarity":0.2782},{"source":"New Jersey AB 5096","target":"Virginia SB 975","similarity":0.2292},{"source":"New Mexico HB 7","target":"Oregon HB 2002","similarity":0.2161},{"source":"New Mexico HB 7","target":"Vermont SB 37","similarity":0.3727},{"source":"New Mexico SB 13","target":"New York SB 1066","similarity":0.2088},{"source":"New Mexico SB 13","target":"Vermont SB 37","similarity":0.4516},{"source":"New York AB 3003","target":"North Carolina HB 259","similarity":0.2807},{"source":"New York AB 3003","target":"Pennsylvania HB 611","similarity":0.345},{"source":"New York AB 3003","target":"Washington SB 5187","similarity":0.2135},{"source":"New York SB 1066","target":"Vermont SB 37","similarity":0.2855},{"source":"North Carolina SB 20","target":"North Dakota SB 2150","similarity":0.3345},{"source":"North Carolina SB 20","target":"South Carolina SB 474","similarity":0.2709},{"source":"North Carolina SB 20","target":"Utah HB 467","similarity":0.2965},{"source":"North Carolina SB 20","target":"Virginia SB 798","similarity":0.2284},{"source":"North Carolina SB 20","target":"Virginia SB 975","similarity":0.2847},{"source":"North Carolina SB 20","target":"West Virginia SB 552","similarity":0.2063},{"source":"North Carolina HB 190","target":"Virginia SB 798","similarity":0.2234},{"source":"North Carolina HB 190","target":"Virginia SB 975","similarity":0.2294},{"source":"North Carolina HB 259","target":"Pennsylvania HB 611","similarity":0.2711},{"source":"North Dakota SB 2150","target":"South Carolina SB 474","similarity":0.3294},{"source":"North Dakota SB 2150","target":"Utah HB 467","similarity":0.2896},{"source":"Oregon HB 2002","target":"Vermont SB 37","similarity":0.2381},{"source":"Pennsylvania HB 611","target":"Texas SB 30","similarity":0.2224},{"source":"Pennsylvania HB 611","target":"Washington SB 5187","similarity":0.4227},{"source":"South Carolina SB 474","target":"Utah HB 467","similarity":0.2853},{"source":"South Carolina SB 474","target":"Wyoming HB 152","similarity":0.2357},{"source":"Utah HB 26","target":"Virginia SB 798","similarity":0.2506},{"source":"Utah HB 467","target":"Virginia SB 975","similarity":0.2549},{"source":"Utah SB 208","target":"Virginia SB 975","similarity":0.2109},{"source":"Vermont SB 37","target":"Virginia SB 975","similarity":0.2156},{"source":"Virginia SB 798","target":"West Virginia HB 3302","similarity":0.2408}],"meta":{"total_bills":188,"total_protective":73,"total_restrictive":88,"total_neutral":27,"total_states":46,"mean_novelty":0.769,"sd_novelty":0.122,"anchor_pair":["Nevada SB 370","Washington HB 1155"],"anchor_similarity":0.8067,"min_threshold_included":0.2}};
+
+// ============ STATE ============
+const state = {
+  threshold: 0.25,
+  directions: new Set(['Protective', 'Restrictive', 'Neutral']),
+  selected: null,
+  searched: null,
+};
+
+const COLOR = {
+  Protective: '#2166AC',
+  Restrictive: '#B2182B',
+  Neutral: '#878787',
+};
+
+// ============ DATA PREP ============
+const allNodes = DATA.nodes.map(d => ({...d}));
+const allEdges = DATA.edges.map(d => ({...d}));
+const nodesById = new Map(allNodes.map(n => [n.id, n]));
+
+// Populate search datalist
+const dl = document.getElementById('billList');
+allNodes.forEach(n => {
+  const opt = document.createElement('option');
+  opt.value = n.id;
+  dl.appendChild(opt);
+});
+
+// ============ SVG SETUP ============
+const canvas = document.getElementById('canvasWrap');
+const svg = d3.select('#graph');
+let width = canvas.clientWidth;
+let height = canvas.clientHeight;
+
+svg.attr('viewBox', [0, 0, width, height]);
+
+const g = svg.append('g');
+const zoom = d3.zoom()
+  .scaleExtent([0.3, 4])
+  .on('zoom', (event) => g.attr('transform', event.transform));
+svg.call(zoom);
+
+const linkGroup = g.append('g').attr('class', 'links');
+const nodeGroup = g.append('g').attr('class', 'nodes');
+const labelGroup = g.append('g').attr('class', 'labels');
+
+// Tooltip
+const tooltip = document.getElementById('tooltip');
+
+// ============ FORCE SIMULATION ============
+// Link distance: inversely proportional to similarity².
+// Higher similarity → shorter distance → pulled closer.
+function linkDistance(d) {
+  // At sim=0.8, distance ~25; at sim=0.2, distance ~200
+  return 20 + 250 * Math.pow(1 - d.similarity, 2);
+}
+
+function linkStrength(d) {
+  return Math.pow(d.similarity, 1.5) * 1.2;
+}
+
+const simulation = d3.forceSimulation()
+  .force('link', d3.forceLink().id(d => d.id)
+    .distance(linkDistance)
+    .strength(linkStrength))
+  .force('charge', d3.forceManyBody().strength(-180))
+  .force('center', d3.forceCenter(width / 2, height / 2))
+  .force('collision', d3.forceCollide(d => nodeRadius(d) + 2));
+
+function nodeRadius(d) {
+  // Novelty ranges roughly 0.2-0.95 in cross-state; scale to 5-12px
+  return 5 + (d.novelty - 0.2) * 10;
+}
+
+// ============ RENDER ============
+let link, node, label;
+
+function update() {
+  // Filter edges by threshold
+  const visibleEdges = allEdges.filter(e =>
+    e.similarity >= state.threshold &&
+    state.directions.has(nodesById.get(typeof e.source === 'object' ? e.source.id : e.source).direction) &&
+    state.directions.has(nodesById.get(typeof e.target === 'object' ? e.target.id : e.target).direction)
+  );
+
+  // Filter nodes: those with at least one visible edge + matching direction
+  const activeIds = new Set();
+  visibleEdges.forEach(e => {
+    activeIds.add(typeof e.source === 'object' ? e.source.id : e.source);
+    activeIds.add(typeof e.target === 'object' ? e.target.id : e.target);
+  });
+  const visibleNodes = allNodes.filter(n => activeIds.has(n.id) && state.directions.has(n.direction));
+
+  document.getElementById('visibleNodes').textContent = visibleNodes.length;
+  document.getElementById('visibleEdges').textContent = visibleEdges.length;
+
+  // LINKS
+  link = linkGroup.selectAll('line').data(visibleEdges, d => {
+    const s = typeof d.source === 'object' ? d.source.id : d.source;
+    const t = typeof d.target === 'object' ? d.target.id : d.target;
+    return s + '|' + t;
+  });
+  link.exit().remove();
+  const linkEnter = link.enter().append('line')
+    .attr('class', d => d.similarity >= 0.7 ? 'link anchor' : 'link')
+    .attr('stroke-width', d => 0.8 + d.similarity * 5);
+  link = linkEnter.merge(link);
+
+  // NODES
+  node = nodeGroup.selectAll('circle').data(visibleNodes, d => d.id);
+  node.exit().remove();
+  const nodeEnter = node.enter().append('circle')
+    .attr('class', 'node')
+    .attr('r', d => nodeRadius(d))
+    .attr('fill', d => COLOR[d.direction])
+    .on('mouseover', showTooltip)
+    .on('mousemove', moveTooltip)
+    .on('mouseout', hideTooltip)
+    .on('click', (event, d) => {
+      event.stopPropagation();
+      selectNode(d.id);
+    })
+    .call(d3.drag()
+      .on('start', dragStart)
+      .on('drag', dragging)
+      .on('end', dragEnd));
+  node = nodeEnter.merge(node);
+
+  // LABELS (only for key bills + selected + neighbors)
+  updateLabels();
+
+  // RESTART SIMULATION
+  simulation.nodes(visibleNodes);
+  simulation.force('link').links(visibleEdges);
+  simulation.alpha(0.7).restart();
+}
+
+function updateLabels() {
+  const KEY_BILLS = new Set([
+    'Nevada SB 370', 'Washington HB 1155', 'Vermont SB 37',
+    'Connecticut SB 3', 'Colorado SB 188', 'California SB 345',
+    'New Mexico SB 13', 'Maryland SB 859', 'Virginia SB 975',
+    'Missouri HB 1155', 'North Carolina SB 20',
+    'South Carolina SB 474', 'North Dakota SB 2150', 'Iowa HB 732',
+    'Florida SB 300', 'Minnesota HB 1',
+  ]);
+
+  // Determine which nodes get labels
+  let labeledIds = new Set(KEY_BILLS);
+  if (state.selected) {
+    labeledIds.add(state.selected);
+    // Add neighbors of selected
+    allEdges.forEach(e => {
+      const s = typeof e.source === 'object' ? e.source.id : e.source;
+      const t = typeof e.target === 'object' ? e.target.id : e.target;
+      if (s === state.selected) labeledIds.add(t);
+      if (t === state.selected) labeledIds.add(s);
+    });
+  }
+  if (state.searched) labeledIds.add(state.searched);
+
+  const visibleNodes = simulation.nodes();
+  const labelData = visibleNodes.filter(n => labeledIds.has(n.id));
+
+  label = labelGroup.selectAll('text').data(labelData, d => d.id);
+  label.exit().remove();
+  const labelEnter = label.enter().append('text')
+    .attr('class', 'label')
+    .attr('dx', d => nodeRadius(d) + 4)
+    .attr('dy', 4)
+    .text(d => d.id);
+  label = labelEnter.merge(label);
+}
+
+// ============ TICK ============
+simulation.on('tick', () => {
+  if (link) {
+    link
+      .attr('x1', d => d.source.x)
+      .attr('y1', d => d.source.y)
+      .attr('x2', d => d.target.x)
+      .attr('y2', d => d.target.y);
+  }
+  if (node) {
+    node.attr('cx', d => d.x).attr('cy', d => d.y);
+  }
+  if (label) {
+    label.attr('x', d => d.x).attr('y', d => d.y);
+  }
+  positionAnchorCallout();
+});
+
+// ============ ANCHOR CALLOUT ============
+const anchorCallout = document.getElementById('anchorCallout');
+function positionAnchorCallout() {
+  const nv = nodesById.get('Nevada SB 370');
+  const wa = nodesById.get('Washington HB 1155');
+  if (!nv || !wa || nv.x === undefined) return;
+  const t = d3.zoomTransform(svg.node());
+  const mx = (nv.x + wa.x) / 2;
+  const my = (nv.y + wa.y) / 2;
+  const sx = mx * t.k + t.x;
+  const sy = my * t.k + t.y;
+  anchorCallout.style.left = (sx + 18) + 'px';
+  anchorCallout.style.top = (sy - 14) + 'px';
+}
+setTimeout(() => anchorCallout.classList.add('visible'), 1500);
+
+// ============ INTERACTIONS ============
+function selectNode(id) {
+  state.selected = id;
+  const n = nodesById.get(id);
+  if (!n) return;
+
+  // Find neighbors
+  const neighbors = new Map();
+  allEdges.forEach(e => {
+    const s = typeof e.source === 'object' ? e.source.id : e.source;
+    const t = typeof e.target === 'object' ? e.target.id : e.target;
+    if (s === id) neighbors.set(t, e.similarity);
+    if (t === id) neighbors.set(s, e.similarity);
+  });
+
+  // Highlight / dim
+  node.classed('selected', d => d.id === id)
+      .classed('neighbor', d => neighbors.has(d.id))
+      .classed('dimmed', d => d.id !== id && !neighbors.has(d.id));
+
+  link.classed('highlighted', d => {
+        const s = typeof d.source === 'object' ? d.source.id : d.source;
+        const t = typeof d.target === 'object' ? d.target.id : d.target;
+        return s === id || t === id;
+      })
+      .classed('dimmed', d => {
+        const s = typeof d.source === 'object' ? d.source.id : d.source;
+        const t = typeof d.target === 'object' ? d.target.id : d.target;
+        return s !== id && t !== id;
+      });
+
+  updateLabels();
+  label.classed('dimmed', d => d.id !== id && !neighbors.has(d.id));
+
+  renderSelected(n, neighbors);
+}
+
+function clearSelection() {
+  state.selected = null;
+  state.searched = null;
+  if (node) node.classed('selected', false).classed('neighbor', false).classed('dimmed', false);
+  if (link) link.classed('highlighted', false).classed('dimmed', false);
+  updateLabels();
+  renderPlaceholder();
+  document.getElementById('search').value = '';
+}
+
+function renderSelected(bill, neighbors) {
+  // Sort neighbors by similarity descending
+  const sorted = Array.from(neighbors.entries())
+    .sort((a, b) => b[1] - a[1]);
+
+  const maxSim = sorted.length ? sorted[0][1] : 1;
+
+  const partnersHtml = sorted.map(([pid, sim]) => {
+    const partner = nodesById.get(pid);
+    const barPct = (sim / 0.85) * 100; // normalize to max observed ~0.8
+    return `
+      <li class="partner-item" onclick="selectNode('${pid.replace(/'/g, "\'")}')">
+        <span class="partner-name">
+          <span class="partner-dot" style="background:${COLOR[partner.direction]}"></span>
+          ${partner.id}
+        </span>
+        <span class="partner-sim">${sim.toFixed(3)}</span>
+        <div class="sim-bar-wrap">
+          <div class="sim-bar-fill" style="width:${barPct}%; background:${COLOR[partner.direction]}"></div>
+        </div>
+      </li>`;
+  }).join('');
+
+  document.getElementById('selectedContainer').innerHTML = `
+    <div class="selected-panel">
+      <div class="bill-name">${bill.id}</div>
+      <dl class="bill-meta">
+        <dt>State</dt><dd>${bill.state}</dd>
+        <dt>Direction</dt><dd><span class="dir-badge ${bill.direction}">${bill.direction}</span></dd>
+        <dt>Mechanism</dt><dd>${bill.mechanism}</dd>
+        <dt>Novelty</dt><dd>${bill.novelty.toFixed(3)}</dd>
+        <dt>Partners</dt><dd>${sorted.length} cross-state ties</dd>
+      </dl>
+    </div>
+    <div style="font-family:'IBM Plex Mono',monospace; font-size:9.5px; letter-spacing:0.14em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:8px;">
+      Similarity partners (sorted)
+    </div>
+    <ul class="partners-list">${partnersHtml}</ul>
+  `;
+}
+
+function renderPlaceholder() {
+  document.getElementById('selectedContainer').innerHTML = `
+    <div class="selected-placeholder">
+      Click any node in the graph to see its cross-state similarity partners sorted by strength.
+    </div>`;
+}
+
+// Make selectNode globally accessible for partner-click
+window.selectNode = selectNode;
+
+// ============ TOOLTIP ============
+function showTooltip(event, d) {
+  tooltip.innerHTML = `
+    <div class="tooltip-name">${d.id}</div>
+    <div><span class="dir-badge ${d.direction}" style="background:rgba(255,255,255,0.15);color:${COLOR[d.direction]};">${d.direction}</span></div>
+    <div class="tooltip-meta">
+      Novelty ${d.novelty.toFixed(3)} &nbsp;·&nbsp; ${d.mechanism}
+    </div>
+  `;
+  tooltip.style.opacity = '1';
+  moveTooltip(event);
+}
+function moveTooltip(event) {
+  tooltip.style.left = (event.clientX + 14) + 'px';
+  tooltip.style.top = (event.clientY + 14) + 'px';
+}
+function hideTooltip() {
+  tooltip.style.opacity = '0';
+}
+
+// ============ DRAG ============
+function dragStart(event, d) {
+  if (!event.active) simulation.alphaTarget(0.3).restart();
+  d.fx = d.x; d.fy = d.y;
+}
+function dragging(event, d) {
+  d.fx = event.x; d.fy = event.y;
+}
+function dragEnd(event, d) {
+  if (!event.active) simulation.alphaTarget(0);
+  d.fx = null; d.fy = null;
+}
+
+// ============ CONTROL WIRING ============
+document.getElementById('threshold').addEventListener('input', (e) => {
+  state.threshold = parseFloat(e.target.value);
+  document.getElementById('thresholdVal').textContent = state.threshold.toFixed(2);
+  update();
+});
+
+document.querySelectorAll('#directionFilters .pill').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const dir = btn.dataset.dir;
+    if (state.directions.has(dir)) {
+      if (state.directions.size === 1) return; // don't let them deselect all
+      state.directions.delete(dir);
+      btn.classList.remove('active');
+    } else {
+      state.directions.add(dir);
+      btn.classList.add('active');
+    }
+    update();
+  });
+});
+
+document.getElementById('search').addEventListener('change', (e) => {
+  const q = e.target.value.trim();
+  if (nodesById.has(q)) {
+    selectNode(q);
+  }
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  clearSelection();
+  svg.transition().duration(500).call(zoom.transform, d3.zoomIdentity);
+  simulation.alpha(0.8).restart();
+});
+
+// Click on empty svg to clear
+svg.on('click', (event) => {
+  if (event.target.tagName === 'svg' || event.target.tagName === 'rect') {
+    clearSelection();
+  }
+});
+
+// ============ RESIZE ============
+window.addEventListener('resize', () => {
+  width = canvas.clientWidth;
+  height = canvas.clientHeight;
+  svg.attr('viewBox', [0, 0, width, height]);
+  simulation.force('center', d3.forceCenter(width / 2, height / 2));
+  simulation.alpha(0.3).restart();
+});
+
+// ============ GO ============
+update();
+renderPlaceholder();
+
+</script>
+</body>
+</html>
